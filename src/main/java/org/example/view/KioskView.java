@@ -127,7 +127,6 @@ public class KioskView extends JFrame {
         JButton callButton = new JButton("직원 호출");
         callButton.setPreferredSize(buttonSize);
         callButton.setFont(buttonFont);
-        callButton.setBackground(new Color(0xECE9FF));
         callButton.setVisible(true);
         footer.add(callButton);
 
