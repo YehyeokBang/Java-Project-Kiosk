@@ -17,9 +17,12 @@ public class KioskView extends JFrame {
     public boolean isTakeOutChecked = false;
     public boolean isTakeOut = false;
     private String category = CATEGORY_1.getName();
+    public List<Menu> menus = MenuLoader.loadMenuFromExcel("src/main/resources/menu.xlsx");
+
+    private final JPanel menuBody = new JPanel();
+    private final String PASSWORD = "1234";
     private final Font buttonFont = new Font("맑은 고딕", Font.BOLD, 16);
     private final OrderManager orderManager = new OrderManager();
-    private final List<Menu> menus = MenuLoader.loadMenuFromExcel("src/main/resources/menu.xlsx");
 
     public KioskView() {
         super("Kiosk");
@@ -44,10 +47,20 @@ public class KioskView extends JFrame {
         adminButton.setLocation(1075, 25);
         adminButton.setFont(new Font("맑은 고딕", Font.BOLD, 15));
 
+        // event
+        adminButton.addActionListener(e -> {
+            String enteredPassword = JOptionPane.showInputDialog(this, "비밀번호를 입력하세요:");
+
+            if (enteredPassword != null && enteredPassword.equals(PASSWORD)) {
+                AdminView adminView = new AdminView(this); // KioskView 인스턴스를 전달
+            } else {
+                JOptionPane.showMessageDialog(this, "비밀번호가 일치하지 않습니다.", "경고", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
         adminButton.setVisible(true);
         header.add(adminButton);
 
-        JPanel menuBody = new JPanel();
         menuBody.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
         menuBody.setSize(1200, 710);
         menuBody.setLocation(0, 170);
@@ -170,30 +183,28 @@ public class KioskView extends JFrame {
         return categoryButton;
     }
 
+    public void updateMenuButtons() {
+        // 메뉴 정보가 업데이트되면 메뉴 버튼도 업데이트
+        displayMenuButtons(menuBody);
+    }
+
     private JButton createMenuButton(Menu menu, OrderManager orderManager) {
         // 이미지 로드 및 크기 조정
         ImageIcon image;
-        if (isMenuSizeLarge) {
-            image = new ImageIcon(menu.getImage().getScaledInstance(300, 400, Image.SCALE_SMOOTH));
-        } else {
-            image = new ImageIcon(menu.getImage().getScaledInstance(120, 170, Image.SCALE_SMOOTH));
-        }
-
-        JButton menuButton = new JButton("<html><b>" + menu.getName() + "</b><br>" +
-                "<font size='4'>" + "</font><br>" + menu.getPrice() + "원<br>" + menu.getDescription() + "</html>");
-
-        // 이미지 아이콘 설정
-        menuButton.setIcon(image);
+        JButton menuButton = new JButton("<html><b>" + menu.getName() + "</b><br><br>" + menu.getDescription() + "<br><br><br>" + menu.getPrice() + "원<br></html>");
 
         if (isMenuSizeLarge) {
+            image = new ImageIcon(menu.getImage().getScaledInstance(250, 340, Image.SCALE_SMOOTH));
             menuButton.setFont(new Font("맑은 고딕", Font.BOLD, 30));
             menuButton.setPreferredSize(new Dimension(540, 650));
         } else {
-            menuButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
+            image = new ImageIcon(menu.getImage().getScaledInstance(120, 170, Image.SCALE_SMOOTH));
+            menuButton.setFont(new Font("맑은 고딕", Font.BOLD, 16));
             menuButton.setPreferredSize(new Dimension(380, 305));
         }
 
-        menuButton.setFont(buttonFont);
+        // 이미지 아이콘 설정
+        menuButton.setIcon(image);
 
         menuButton.addActionListener(e -> {
             if (!isTakeOutChecked) {
