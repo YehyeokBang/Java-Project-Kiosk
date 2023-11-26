@@ -2,9 +2,10 @@ package org.example.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class CardView extends JFrame {
-    String imagePath = "src/main/resources/card.jpg";
+    String imagePath = "card.jpg";
 
     public CardView() {
         super("Card");
@@ -19,12 +20,12 @@ public class CardView extends JFrame {
         textLabel.setVerticalAlignment(SwingConstants.CENTER);
         textLabel.setSize(500, 50);
         textLabel.setLocation(0, 400);
-        textLabel.setOpaque(true);  // 배경을 표시하기 위해 true로 설정
-        textLabel.setBackground(new Color(255, 255, 255, 200));  // 투명한 흰색 배경
+        textLabel.setOpaque(true);
+        textLabel.setBackground(new Color(255, 255, 255, 200));
         add(textLabel);
 
         // 이미지 표시
-        ImageIcon imageIcon = new ImageIcon(imagePath);
+        ImageIcon imageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource(imagePath)));
         JLabel label = new JLabel(imageIcon);
         label.setSize(500, 400);
         label.setLocation(0, 0);

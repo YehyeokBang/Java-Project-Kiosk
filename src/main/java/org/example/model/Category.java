@@ -1,16 +1,16 @@
 package org.example.model;
 
-public enum Category {
-    CATEGORY_1("커피"),
-    CATEGORY_2("티");
+import java.util.ArrayList;
+import java.util.List;
 
-    private final String name;
+public class Category {
+    public final List<String> category;
 
-    Category(String name) {
-        this.name = name;
+    public Category(List<String> categoryNames) {
+        this.category = new ArrayList<>(categoryNames);
     }
 
-    public String getName() {
-        return name;
+    public List<String> getCategory() {
+        return category;
     }
 }

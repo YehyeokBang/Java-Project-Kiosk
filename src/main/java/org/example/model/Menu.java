@@ -56,11 +56,4 @@ public class Menu {
     public String getDescription() {
         return description;
     }
-
-    public void updateInfo(String name, int price, String description, String category) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.category = category;
-    }
 }

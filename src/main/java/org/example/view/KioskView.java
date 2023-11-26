@@ -7,18 +7,18 @@ import org.example.model.OrderManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
-
-import static org.example.model.Category.CATEGORY_1;
-import static org.example.model.Category.CATEGORY_2;
+import java.util.Random;
 
 public class KioskView extends JFrame {
     private boolean isMenuSizeLarge = false;
     public boolean isTakeOutChecked = false;
     public boolean isTakeOut = false;
-    private String category = CATEGORY_1.getName();
-    public List<Menu> menus = MenuLoader.loadMenuFromExcel("src/main/resources/menu.xlsx");
+    private String categoryName;
+    public List<Menu> menus = MenuLoader.loadMenuFromExcel();
 
+    public final Category category;
     private final JPanel menuBody = new JPanel();
     private final String PASSWORD = "1234";
     private final Font buttonFont = new Font("맑은 고딕", Font.BOLD, 16);
@@ -32,6 +32,19 @@ public class KioskView extends JFrame {
         c.setLayout(null);
         setLocationRelativeTo(null);
 
+        List<String> categoryNames = new ArrayList<>();
+        for (Menu menu : menus) {
+            categoryNames.add(menu.getCategory());
+        }
+
+        // 중복 제거
+        categoryNames = categoryNames.stream()
+                .distinct()
+                .toList();
+
+        this.category = new Category(categoryNames);
+        categoryName = this.category.getCategory().get(0);
+
         Dimension buttonSize = new Dimension(180, 60);
         Font buttonFont = new Font("맑은 고딕", Font.BOLD, 20);
 
@@ -41,6 +54,18 @@ public class KioskView extends JFrame {
         header.setVisible(true);
         header.setBackground(new Color(0x7F6AFF));
         c.add(header);
+
+        Random random = new Random();
+        int randomIndex = random.nextInt(menus.size());
+        Menu randomMenu = menus.get(randomIndex);
+        String randomMenuName = randomMenu.getName();
+        JLabel headerLabel = new JLabel("오늘의 추천 메뉴 : " + randomMenuName);
+        headerLabel.setSize(500, 100);
+        headerLabel.setLocation(50, 0);
+        headerLabel.setForeground(Color.WHITE);
+        headerLabel.setFont(new Font("맑은 고딕", Font.BOLD, 30));
+        headerLabel.setVisible(true);
+        header.add(headerLabel);
 
         JButton adminButton = new JButton("관리자 설정");
         adminButton.setSize(100, 50);
@@ -73,12 +98,11 @@ public class KioskView extends JFrame {
         categoryPanel.setLocation(0, 100);
         categoryPanel.setBackground(new Color(0xB9AAF5));
         categoryPanel.setVisible(true);
-        JButton categoryButton1 = getCategoryButton(CATEGORY_1, menuBody);
-        categoryPanel.add(categoryButton1);
 
-        JButton categoryButton2 = getCategoryButton(CATEGORY_2, menuBody);
-        categoryPanel.add(categoryButton2);
-
+        for (String categoryName : category.getCategory()) {
+            JButton categoryButton = getCategoryButton(categoryName, menuBody);
+            categoryPanel.add(categoryButton);
+        }
         c.add(categoryPanel);
 
         displayMenuButtons(menuBody);
@@ -127,16 +151,18 @@ public class KioskView extends JFrame {
                 label.setFont(new Font("맑은 고딕", Font.BOLD, 30));
                 dialog1.add(label);
 
-                dialog1.setSize(400, 140);
+                javax.swing.Timer timer = new javax.swing.Timer(7000, e2 -> {
+                    dialog1.dispose();
+                    ((javax.swing.Timer) e2.getSource()).stop(); // 타이머 중지
+                });
+
+                timer.setRepeats(false); // 반복하지 않도록 설정
+                timer.start();
+
+                dialog1.setSize(400, 130);
                 dialog1.setLocationRelativeTo(this);
                 dialog1.setVisible(true);
 
-                // 10초 뒤 사라짐
-                Timer timer = new Timer(8000, e2 -> {
-                    dialog1.dispose();
-                });
-                timer.setRepeats(false);
-                timer.start();
             });
 
             cancelButton.addActionListener(e1 -> {
@@ -147,7 +173,7 @@ public class KioskView extends JFrame {
             dialog.add(cancelButton);
 
             // 다이얼로그 크기 및 위치 설정
-            dialog.setSize(500, 350);
+            dialog.setSize(500, 290);
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
         });
@@ -169,14 +195,14 @@ public class KioskView extends JFrame {
         setVisible(true);
     }
 
-    private JButton getCategoryButton(Category category, JPanel menuBody) {
-        JButton categoryButton = new JButton(category.getName());
+    private JButton getCategoryButton(String category, JPanel menuBody) {
+        JButton categoryButton = new JButton(category);
         categoryButton.setPreferredSize(new Dimension(180, 55));
         categoryButton.setFont(buttonFont);
         categoryButton.setVisible(true);
 
         categoryButton.addActionListener(e -> {
-            changeCategory(category.getName());
+            changeCategory(category);
             displayMenuButtons(menuBody);
         });
 
@@ -236,7 +262,7 @@ public class KioskView extends JFrame {
                 dialog.add(eatInButton);
 
                 // 다이얼로그 크기 및 위치 설정
-                dialog.setSize(500, 350);
+                dialog.setSize(500, 290);
                 dialog.setLocationRelativeTo(this);
                 dialog.setVisible(true);
             } else {
@@ -254,7 +280,7 @@ public class KioskView extends JFrame {
             // 크게 보기 상태인 경우, FlowLayout 사용
             body.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
             for (Menu menu : menus) {
-                if (menu.getCategory().equals(category)) {
+                if (menu.getCategory().equals(categoryName)) {
                     JButton menuButton = createMenuButton(menu, orderManager);
                     body.add(menuButton);
                 }
@@ -266,7 +292,7 @@ public class KioskView extends JFrame {
             body.setLayout(new GridLayout(rows, cols, 20, 20));
 
             for (Menu menu : menus) {
-                if (menu.getCategory().equals(category)) {
+                if (menu.getCategory().equals(categoryName)) {
                     JButton menuButton = createMenuButton(menu, orderManager);
                     body.add(menuButton);
                 }
@@ -286,6 +312,6 @@ public class KioskView extends JFrame {
     }
 
     private void changeCategory(String category) {
-        this.category = category;
+        this.categoryName = category;
     }
 }

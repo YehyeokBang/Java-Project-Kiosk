@@ -11,16 +11,25 @@ import org.example.model.Menu;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MenuLoader {
-    public static List<Menu> loadMenuFromExcel(String filePath) {
+    private final static String FILE_PATH = "/menu.xlsx";
+
+    public static List<Menu> loadMenuFromExcel() {
         List<Menu> menus = new ArrayList<>();
 
-        try (Workbook workbook = new XSSFWorkbook(new FileInputStream(filePath))) {
+        String path = new File("").getAbsolutePath();
+        File file = new File(path + FILE_PATH);
+
+        try (InputStream inputStream = new FileInputStream(file);
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+
             Sheet sheet = workbook.getSheetAt(0);
             XSSFDrawing drawing = (XSSFDrawing) sheet.createDrawingPatriarch();
 
@@ -30,6 +39,11 @@ public class MenuLoader {
                 Menu menu = null;
                 Row row = sheet.getRow(i);
 
+                try {
+                    row.getCell(1);
+                } catch (Exception e) {
+                    return menus;
+                }
                 Cell nameCell = row.getCell(1);
                 Cell priceCell = row.getCell(2);
                 Cell descriptionCell = row.getCell(3);

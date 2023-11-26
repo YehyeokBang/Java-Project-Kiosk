@@ -5,8 +5,6 @@ import org.example.model.OrderManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Map;
 
 public class PayView extends JFrame {
@@ -37,27 +35,20 @@ public class PayView extends JFrame {
         JScrollPane scrollPane = new JScrollPane(menuPanel);
 
         totalPriceLabel = new JLabel("총 가격: " + orderManager.calculateTotalPrice() + "원");
+        totalPriceLabel.setFont(new Font("맑은 고딕", Font.BOLD, 30));
 
         JButton cancelButton = new JButton("이전");
         cancelButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PayView.this.dispose();
-            }
-        });
+        cancelButton.addActionListener(e -> PayView.this.dispose());
 
         JButton payButton = new JButton("결제하기");
         payButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-        payButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                orderManager.getOrders().clear();
-                orderView.dispose();
-                PayView.this.dispose();
+        payButton.addActionListener(e -> {
+            orderManager.getOrders().clear();
+            orderView.dispose();
+            PayView.this.dispose();
 
-                SwingUtilities.invokeLater(CardView::new);  // EDT에서 실행되도록 변경
-            }
+            SwingUtilities.invokeLater(CardView::new);
         });
 
         setLayout(new BorderLayout());
@@ -77,8 +68,9 @@ public class PayView extends JFrame {
                 menuPanel.add(menuEntry);
             }
 
-            menuPanel.revalidate(); // 새로운 컴포넌트를 추가한 후 다시 그리기
-            menuPanel.repaint(); // 다시 그리기
+            // 새로운 컴포넌트를 추가한 후 다시 그리기
+            menuPanel.revalidate();
+            menuPanel.repaint();
         });
     }
 
@@ -99,30 +91,24 @@ public class PayView extends JFrame {
 
         JButton minusButton = new JButton("-");
         minusButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-        minusButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (quantity > 1) {
-                    orderManager.addOrder(menu, -1);
-                    updateMenuPanel();
-                    updateTotalPrice();
-                } else {
-                    orderManager.removeOrder(menu);
-                    updateMenuPanel();
-                    updateTotalPrice();
-                }
+        minusButton.addActionListener(e -> {
+            if (quantity > 1) {
+                orderManager.addOrder(menu, -1);
+                updateMenuPanel();
+                updateTotalPrice();
+            } else {
+                orderManager.removeOrder(menu);
+                updateMenuPanel();
+                updateTotalPrice();
             }
         });
 
         JButton plusButton = new JButton("+");
         plusButton.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-        plusButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                orderManager.addOrder(menu, 1);
-                updateMenuPanel();
-                updateTotalPrice();
-            }
+        plusButton.addActionListener(e -> {
+            orderManager.addOrder(menu, 1);
+            updateMenuPanel();
+            updateTotalPrice();
         });
 
         menuEntryPanel.add(nameLabel);
