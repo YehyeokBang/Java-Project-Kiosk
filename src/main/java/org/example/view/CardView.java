@@ -5,7 +5,7 @@ import java.awt.*;
 import java.util.Objects;
 
 public class CardView extends JFrame {
-    String imagePath = "card.jpg";
+    private static final String CARD_IMAGE_PATH = "/card.jpg";
 
     public CardView() {
         super("Card");
@@ -25,7 +25,7 @@ public class CardView extends JFrame {
         add(textLabel);
 
         // 이미지 표시
-        ImageIcon imageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource(imagePath)));
+        ImageIcon imageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource(CARD_IMAGE_PATH)));
         JLabel label = new JLabel(imageIcon);
         label.setSize(500, 400);
         label.setLocation(0, 0);

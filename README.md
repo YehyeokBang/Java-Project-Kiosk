@@ -1,2 +1,2 @@
 # JavaProject
-- Kiosk GUI Project:q
+- Kiosk GUI Project
