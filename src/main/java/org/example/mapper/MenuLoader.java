@@ -36,7 +36,7 @@ public class MenuLoader {
             List<XSSFShape> shapes = drawing.getShapes();
 
             for (int i = 0; i < shapes.size(); i++) {
-                Menu menu = null;
+                Menu menu;
                 Row row = sheet.getRow(i);
 
                 try {
